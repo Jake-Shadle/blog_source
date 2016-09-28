@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "./content",
+			"name": "content",
+			"file_include_patterns": [
+				"*.md"
+			],
+		}
+	]
+}
