@@ -1,8 +1,12 @@
----
-date: 2016-09-28T19:38:21Z
-title: Trying out this blogging thing
-type: post
----
++++
+title = "Trying out this blogging thing"
+template = "page.html"
+date = 2016-09-28T19:38:21Z
+
+[taxonomies]
+tags = ["rust"]
+categories = ["meta"]
++++
 
 Though I have enjoyed reading coding blogs for years now, I have never thought seriously about doing my own, most
 probably because the main language I use is **C++**, which doesn't really inspire me, to say the least.
