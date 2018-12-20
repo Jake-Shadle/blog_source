@@ -1,36 +1,21 @@
-# hostname (and path) to the root eg. http://spf13.com/
-baseurl = "https://jake-shadle.github.io"
+base_url = "https://jake-shadle.github.io"
 
 # Site title
 title = "Jake's Blog"
 
-# Copyright
-copyright = "(c) 2016 Jake Shadle."
-
 # Language
-languageCode = "en-EN"
-
-# Metadata format
-# "yaml", "toml", "json"
-metaDataFormat = "yaml"
+default_language = "en"
 
 # Theme to use (located in /themes/THEMENAME/)
-theme = "hyde-y"
+theme = "after-dark"
+paginate_by = 5
+highlight_code = true
+highlight_theme = "charcoal"
 
-# Pagination
-paginate = 10
-paginatePath = "page"
-
-# Enable Disqus integration
-disqusShortname = "jake-blog"
-
-[permalinks]
-    post = "/:year/:month/:day/:slug/"
-    code = "/:slug/"
-
-[taxonomies]
-    tag = "tags"
-    topic = "topics"
+taxonomies = [
+    { name = "tags", paginate_by = 5 },
+    { name = "categories", paginate_by = 5 },
+]
 
 [author]
     name = "Jake Shadle"
@@ -38,41 +23,24 @@ disqusShortname = "jake-blog"
 #
 # All parameters below here are optional and can be mixed and matched.
 #
-[params]
-    # You can use markdown here.
-    brand = "Jake's Blog"
-    topline = "words about stuff"
-    footline = "code with <i class='fa fa-heart'></i> and probably <i class='fa fa-frown-o'></i>"
+[extra]
+# You can use markdown here.
+brand = "Jake's Blog"
+topline = "words about stuff"
+footline = "code with <i class='fa fa-heart'></i> and probably <i class='fa fa-frown-o'></i>"
 
-    # Sidebar position
-    # false, true, "left", "right"
-    sidebar = "left"
+# Sidebar position
+# false, true, "left", "right"
+sidebar = "left"
 
-    # Text for the top menu link, which goes the root URL for the site.
-    # Default (if omitted) is "Home".
-    home = "home"
-
-    # Select a syntax highight.
-    # Check the static/css/highlight directory for options.
-    highlight = "monokai_sublime"
-
-    # Google Analytics.
-    googleAnalytics = "UA-84938518-1"
-
-    # Sidebar social links.
-    github = "Jake-Shadle" # Your Github profile ID
-    twitter = "Ca1ne" # Your Twitter profile ID
-
-    # Sidebar RSS link: will only show up if there is a RSS feed
-    # associated with the current page
-    rss = true
-
-[blackfriday]
-    angledQuotes = true
-    fractions = false
-    hrefTargetBlank = false
-    latexDashes = true
-    plainIdAnchors = true
-    extensions = []
-    extensionmask = []
-
+# Text for the top menu link, which goes the root URL for the site.
+# Default (if omitted) is "Home".
+home = "home"
+after_dark_title = "Jake's Blog"
+after_dark_menu = [
+    { url = "$BASE_URL", name = "Home" },
+    { url = "$BASE_URL/categories", name = "Categories" },
+    { url = "$BASE_URL/tags", name = "Tags" },
+    { url = "https://github.com/Jake-Shadle", name = "Github" },
+    { url = "https://twitter.com/Ca1ne", name = "Twitter" },
+]
