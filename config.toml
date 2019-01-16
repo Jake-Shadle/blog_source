@@ -7,10 +7,10 @@ title = "Jake's Blog"
 default_language = "en"
 
 # Theme to use (located in /themes/THEMENAME/)
-theme = "after-dark"
+theme = "even"
 paginate_by = 5
 highlight_code = true
-highlight_theme = "charcoal"
+#highlight_theme = "charcoal"
 
 taxonomies = [
     { name = "tags", paginate_by = 5 },
@@ -36,8 +36,8 @@ sidebar = "left"
 # Text for the top menu link, which goes the root URL for the site.
 # Default (if omitted) is "Home".
 home = "home"
-after_dark_title = "Jake's Blog"
-after_dark_menu = [
+even_title = "Jake's Blog"
+even_menu = [
     { url = "$BASE_URL", name = "Home" },
     { url = "$BASE_URL/categories", name = "Categories" },
     { url = "$BASE_URL/tags", name = "Tags" },

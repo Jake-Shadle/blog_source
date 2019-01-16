@@ -1,7 +1,10 @@
-base_url = "https://zola-after-dark.netlify.com"
+# The URL the site will be built for
+base_url = "https://zola-even.netlify.com"
+
 compile_sass = true
-title = "after-dark theme"
+title = "even theme"
 description = ""
+highlight_code = true
 
 taxonomies = [
     {name = "categories", rss = true},
@@ -10,9 +13,11 @@ taxonomies = [
 
 [extra]
 author = "Vincent"
-after_dark_menu = [
+even_menu = [
     {url = "$BASE_URL", name = "Home"},
     {url = "$BASE_URL/categories", name = "Categories"},
     {url = "$BASE_URL/tags", name = "Tags"},
+    {url = "$BASE_URL/about", name = "About"},
 ]
-after_dark_title = "My blog"
+
+even_title = "Even"
