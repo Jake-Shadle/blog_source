@@ -1,44 +1,26 @@
 base_url = "https://jake-shadle.github.io"
 
-# Site title
 title = "Jake's Blog"
-
-# Language
 default_language = "en"
 
-# Theme to use (located in /themes/THEMENAME/)
-theme = "after-dark"
+theme = "Zulma"
 paginate_by = 5
-highlight_code = true
-highlight_theme = "charcoal"
 
 taxonomies = [
     { name = "tags", paginate_by = 5 },
     { name = "categories", paginate_by = 5 },
 ]
 
-[author]
-    name = "Jake Shadle"
+[markdown]
+highlight_theme = "OneHalfDark"
+highlight_code = true
+render_emoji = true
 
-#
-# All parameters below here are optional and can be mixed and matched.
-#
 [extra]
-# You can use markdown here.
-brand = "Jake's Blog"
-topline = "words about stuff"
-footline = "code with <i class='fa fa-heart'></i> and probably <i class='fa fa-frown-o'></i>"
-
-# Sidebar position
-# false, true, "left", "right"
-sidebar = "left"
-
-# Text for the top menu link, which goes the root URL for the site.
-# Default (if omitted) is "Home".
-home = "home"
-after_dark_title = "Jake's Blog"
-after_dark_menu = [
-    { url = "$BASE_URL", name = "Home" },
+zulma_title = "Jake's Blog"
+zulma_brand = { text = "Home" }
+zulma_theme = "slate"
+zulma_menu = [
     { url = "$BASE_URL/categories", name = "Categories" },
     { url = "$BASE_URL/tags", name = "Tags" },
     { url = "https://github.com/Jake-Shadle", name = "Github" },

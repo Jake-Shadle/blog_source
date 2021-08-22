@@ -1,7 +1,7 @@
 +++
 title = "Trying out this blogging thing"
 template = "page.html"
-date = 2016-09-28T19:38:21Z
+date = 2016-09-28
 
 [taxonomies]
 tags = ["rust"]
