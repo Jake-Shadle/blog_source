@@ -1,7 +1,7 @@
 +++
 title = "Cross compiling Windows binaries from Linux"
 template = "page.html"
-date = 2021-08-06
+date = 2021-08-22
 
 [taxonomies]
 tags = ["linux", "windows", "rust"]
@@ -183,7 +183,11 @@ ENV CFLAGS_x86_64_pc_windows_msvc="$CL_FLAGS" \
 
 ### 5. Profit
 
-Building a container image from this Dockerfile spec should give allow you to run containers capable of compiling a Rust project targeting Windows, including any C/C++ code that might be used as a dependency....[mostly](#common-issues).
+Building a container image from this Dockerfile spec should give allow you to run containers capable of compiling and linking a Rust project targeting Windows, including any C/C++ code that might be used as a dependency....[mostly](#common-issues).
+
+```sh
+cargo build --target x86_64-pc-windows-msvc
+```
 
 ## Bonus: Headless testing
 
