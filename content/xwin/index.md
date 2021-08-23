@@ -181,6 +181,19 @@ ENV CFLAGS_x86_64_pc_windows_msvc="$CL_FLAGS" \
     CXXFLAGS_x86_64_pc_windows_msvc="$CL_FLAGS"
 ```
 
+As already noted above in the reasons why we went [this route](#how), we use `lld-link` even when compiling on Windows hosts due to its superior speed over `link.exe`. So for our project we just set it in our [.cargo/config.toml](https://doc.rust-lang.org/cargo/reference/config.html#targettriplelinker) so it's used regardless of host platform.
+
+```ini
+[target.x86_64-pc-windows-msvc]
+linker = "lld-link" # Note the lack of extension, which means it will work on both Windows and unix style platforms
+```
+
+If you don't already use `lld-link` when targeting Windows, you'll need to add an additional environment variable so that cargo knows what linker to use, otherwise it will default to `link.exe`.
+
+```dockerfile
+ENV CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER=lld-link
+```
+
 ### 5. Profit
 
 Building a container image from this Dockerfile spec should give allow you to run containers capable of compiling and linking a Rust project targeting Windows, including any C/C++ code that might be used as a dependency....[mostly](#common-issues).
@@ -306,6 +319,9 @@ ENV CC_x86_64_pc_windows_msvc="clang-cl" \
     # doesn't implement all of the options supported by cl, but the ones it doesn't
     # are _generally_ not interesting.
     CL_FLAGS="-Wno-unused-command-line-argument -fuse-ld=lld-link /imsvc/xwin/crt/include /imsvc/xwin/sdk/include/ucrt /imsvc/xwin/sdk/include/um /imsvc/xwin/sdk/include/shared" \
+    # Let cargo know what linker to invoke if you haven't already specified it
+    # in a .cargo/config.toml file
+    CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER="lld-link" \
     RUSTFLAGS="-Lnative=/xwin/crt/lib/x86_64 -Lnative=/xwin/sdk/lib/um/x86_64 -Lnative=/xwin/sdk/lib/ucrt/x86_64"
 
 # These are separate since docker/podman won't transform environment variables defined in the same ENV block
