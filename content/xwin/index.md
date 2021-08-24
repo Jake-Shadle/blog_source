@@ -333,6 +333,13 @@ ENV CFLAGS_x86_64_pc_windows_msvc="$CL_FLAGS" \
 RUN wine wineboot --init
 ```
 
+Here is a [gist](https://gist.github.com/Jake-Shadle/542dfa000a37c4d3c216c976e0fbb973) with the same dockerfile, and an example of how you can build it. I'm using `podman` here, but `docker` should also work.
+
+```sh
+curl --fail -L -o xwin.dockerfile https://gist.githubusercontent.com/Jake-Shadle/542dfa000a37c4d3c216c976e0fbb973/raw/e5d80534beb5d8db2fab0e5a22dce14111749d45/xwin.dockerfile
+podman -t xwin -f xwin.dockerfile .
+```
+
 ## Common issues
 
 Unfortunately, everything is not sunshine and unicorns where cross compiling is concerned, but all of them are solvable, at least in principle.
