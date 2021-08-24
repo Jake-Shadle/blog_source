@@ -147,7 +147,7 @@ We have two basic options for how we could get the CRT and SDK, either run `xwin
 
 ```dockerfile
 RUN set -eux; \
-    xwin_version="0.1.0"; \
+    xwin_version="0.1.1"; \
     xwin_prefix="xwin-$xwin_version-x86_64-unknown-linux-musl"; \
     # Install xwin to cargo/bin via github release. Note you could also just use `cargo install xwin`.
     curl --fail -L https://github.com/Jake-Shadle/xwin/releases/download/$xwin_version/$xwin_prefix.tar.gz | tar -xzv -C /usr/local/cargo/bin --strip-components=1 $xwin_prefix/xwin; \
@@ -296,7 +296,7 @@ RUN set -eux; \
 RUN rustup target add x86_64-pc-windows-msvc
 
 RUN set -eux; \
-    xwin_version="0.1.0"; \
+    xwin_version="0.1.1"; \
     xwin_prefix="xwin-$xwin_version-x86_64-unknown-linux-musl"; \
     # Install xwin to cargo/bin via github release. Note you could also just use `cargo install xwin`.
     curl --fail -L https://github.com/Jake-Shadle/xwin/releases/download/$xwin_version/$xwin_prefix.tar.gz | tar -xzv -C /usr/local/cargo/bin --strip-components=1 $xwin_prefix/xwin; \
@@ -336,7 +336,7 @@ RUN wine wineboot --init
 Here is a [gist](https://gist.github.com/Jake-Shadle/542dfa000a37c4d3c216c976e0fbb973) with the same dockerfile, and an example of how you can build it. I'm using `podman` here, but `docker` should also work.
 
 ```sh
-curl --fail -L -o xwin.dockerfile https://gist.githubusercontent.com/Jake-Shadle/542dfa000a37c4d3c216c976e0fbb973/raw/e5d80534beb5d8db2fab0e5a22dce14111749d45/xwin.dockerfile
+curl --fail -L -o xwin.dockerfile https://gist.githubusercontent.com/Jake-Shadle/542dfa000a37c4d3c216c976e0fbb973/raw/bf6cff2bd4ad776d3def8520adb5a5c657140a9f/xwin.dockerfile
 podman -t xwin -f xwin.dockerfile .
 ```
 
