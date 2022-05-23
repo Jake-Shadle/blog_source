@@ -1,7 +1,7 @@
 +++
 title = "Crash reporting in Rust"
 template = "page.html"
-date = 2022-05-06
+date = 2022-05-23
 
 [taxonomies]
 tags = ["linux", "android", "windows", "macos", "sentry", "rust"]
