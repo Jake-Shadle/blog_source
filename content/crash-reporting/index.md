@@ -120,7 +120,7 @@ With those deficiencies in mind we can come up with a couple of high level goals
 
 Rather than going the Breakpad/Crashpad route of having a single large project to integrate, perhaps [giving basic control](https://github.com/google/breakpad/blob/0808030bee8bc88a34675cd1dd83b965a2249a08/src/client/linux/handler/exception_handler.h#L76-L114) over how crash handling is done, instead provide several crates, each focused on a specific aspect in this larger area that can be used together, or even independently.
 
-For example, you may want to catch crashes when they occur, but instead of creating a minidump, throw up a dialog saying you are very sorry before your program exits. Or maybe (like us at Embark), you want to report minidumps to [Sentry](https://sentry.io) and include not only the minidump, but also the normal event data such as [breadcrumbs](https://docs.sentry.io/product/issues/issue-details/breadcrumb) and [tags](https://docs.sentry.io/product/issues/issue-details/#tags).
+For example, you may want to catch crashes when they occur, but instead of creating a minidump, throw up a dialog saying you are very sorry before your program exits. Or maybe (like us at Embark), you want to report minidumps to [Sentry](https://sentry.io) and include not only the minidump, but also the normal event data such as [breadcrumbs](https://docs.sentry.io/product/issues/issue-details/breadcrumbs) and [tags](https://docs.sentry.io/product/issues/issue-details/#tags).
 
 ### Clean
 
