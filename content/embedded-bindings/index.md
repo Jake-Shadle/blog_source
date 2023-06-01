@@ -1,5 +1,5 @@
 +++
-title = "Windows Woes"
+title = "The case for embedded Windows bindings"
 template = "page.html"
 date = 2023-04-21
 
@@ -18,13 +18,15 @@ First, lets take a look at the current state of the ecosystem around Rust bindin
 
 ### [`winapi`](https://github.com/retep998/winapi-rs)
 
-`winapi` is the original "standard" crate for wanting bindings to Windows (well, other than hand rolling), and has served that role well for years. It has mostly been small changes over versions to add bindings to more functions/APIs, but there was one major overhaul that is worth noting, the move to split the crate into distinct features in the [0.2 -> 0.3](https://github.com/retep998/winapi-rs/issues/316) migration. This was done mostly to mitigate the high compile times for `winapi` (eg. "Ah well 2s is much better than the 30 today!"). You would assume that compile times should be quite low for a bindings crate, but it is not free, which we'll dig into more throughout this post.
+`winapi` is the original "standard" crate for providing bindings to Windows (well, other than hand rolling), and has served that role well for years. It has mostly seen small changes over versions to add bindings to more functions/APIs, but there was one major overhaul that is worth noting, the move to split the crate into distinct features in the [0.2 -> 0.3](https://github.com/retep998/winapi-rs/issues/316) migration. This was done mostly to mitigate the high compile times for `winapi` (eg. ["Ah well 2s is much better than the 30 today!"](https://github.com/retep998/winapi-rs/issues/316#issuecomment-239697740)). You would assume that compile times should be quite low for a bindings crate, but it is not free, which we'll dig into more throughout this post.
 
 At the time of writing, `winapi` has not seen any release in over 3 years, and while many crates still use it for calling into Windows (we currently have 43 crates in our graph that depend on it), it is slowly being supplanted by `windows` and `windows-sys`.
 
 ### [`windows-sys`](https://crates.io/crates/windows-sys)
 
-`windows-sys` came on to the scene late 2021 from Microsoft itself and has several distinct advantages over `winapi`. Being maintained is a definite plus, but mostly it had the advantage of essentially covering the entire (Win32) API surface of Windows as captured in [win32metadata](https://github.com/microsoft/win32metadata), as opposed to `winapi` which was mostly? handwritten.
+`windows-sys` came on to the scene late 2021 from Microsoft itself and has several distinct advantages over `winapi`. Being maintained is a definite plus, but mostly it had the advantage of essentially covering the entire Win32 API surface of Windows as captured in [win32metadata](https://github.com/microsoft/win32metadata), as opposed to `winapi` which was mostly? handwritten. It also includes bindings to the [Windows Driver Kit](https://en.wikipedia.org/wiki/Windows_Driver_Kit) which notably includes bindings to some [`ntapi`](http://undocumented.ntinternals.net/) functions.
+
+While `windows-sys` covers all of Win32 unlike `winapi`, `winapi` does have bindings to [some](https://github.com/retep998/winapi-rs/blob/5b1829956ef645f3c2f8236ba18bb198ca4c2468/src/um/d3d12.rs#L2006-L2254) [COM](https://en.wikipedia.org/wiki/Component_Object_Model) interfaces, while in `windows-sys` all COM interfaces are just represented as type aliases to `*mut c_void`.
 
 ### [`windows`](https://crates.io/crates/windows)
 
@@ -54,13 +56,35 @@ where
 }
 ```
 
-In addition, unlike `winapi`, `windows-sys` has no bindings to COM interfaces/objects, these are only provided by the `windows` crate.
+In addition to the higher level wrappers around every function, the biggest difference is that `windows` includes bindings to all COM interfaces and WinRT interfaces/classes. This includes both the definitions of the virtual function tables at the heart of COM/WinRT, as well as wrapper methods on the interface to call into the correct vtable entry and return the result, which looks something like this.
+
+```rust
+#[repr(transparent)]
+pub struct IModalWindow(::windows_core::IUnknown);
+impl IModalWindow {
+    pub unsafe fn Show<P0>(&self, hwndowner: P0) -> ::windows_core::Result<()>
+    where
+        P0: ::windows_core::IntoParam<super::super::Foundation::HWND>,
+    {
+        (::windows_core::Interface::vtable(self).Show)(::windows_core::Interface::as_raw(self), hwndowner.into_param().abi()).ok()
+    }
+}
+::windows_core::imp::interface_hierarchy!(IModalWindow, ::windows_core::IUnknown);
+unsafe impl ::windows_core::ComInterface for IModalWindow {
+    const IID: ::windows_core::GUID = ::windows_core::GUID::from_u128(0xb4db1657_70d7_485e_8e3e_6fcb5a5c1802);
+}
+#[repr(C)]
+pub struct IModalWindow_Vtbl {
+    pub base__: ::windows_core::IUnknown_Vtbl,
+    pub Show: unsafe extern "system" fn(this: *mut ::core::ffi::c_void, hwndowner: super::super::Foundation::HWND) -> ::windows_core::HRESULT,
+}
+```
 
 ## The difference of opinion
 
 So roughly speaking, the view of the aforementioned crates is that they exist to provide complete (or in the `winapi` case, an as needed basis) bindings to Windows. If you want to call a Win32 function, or use a COM interface, you just add a dependency on the crate you want, enable the feature(s) you need for that functionality, and then use it in your code. Done!
 
-And in my opinion....these crates aren't needed at all for a _vast majority_ of use cases.
+But in my opinion....these crates aren't needed at all for a _vast majority_ of use cases, and in the case of `windows` and `windows-sys` actually have a negative impact on the Rust ecosystem.
 
 Ok, that seems like a rather spicy take, let me explain further.
 
@@ -95,17 +119,17 @@ For some perspective, lets look at the [`windows-sys`](https://github.com/micros
 * 11,142 type aliases
 * 114,452 constants
 
-Now in the `windows-sys` case, other than Copy + Clone being implemented for every struct and union (which is kind of something you don't want for structs that can be several hundred bytes large since it means it's too easy to accidentally do a full memory copy...), it does have the saving grace that there is no actual implementation, just type definitions and extern functions. But these still aren't free and might take longer than you think to compile.
+Now, in the `windows-sys` case, other than Copy + Clone being implemented for every struct and union (which is kind of something you don't want for structs that can be several hundred bytes large since it means it's too easy to accidentally do a full memory copy...), it does have the saving grace that there is no actual implementation, just type definitions and extern functions. But these still aren't free, and might take longer than you think to compile.
 
-`windows` has the additional problem that, not only is every function in `windows-sys` present, the high level wrapper around full of generics and actual implementation, but it also includes **6,845** COM interfaces, each of which has a bunch of implementation to present a friendly API over the lower level one exposed by the COM object.
+`windows` has the additional problem that, in addition to all of the types and constants in `windows-sys`, but every function in `windows-sys` present as a higher level wrapper around full of generics and actual implementation, but it also includes **6,845** COM interfaces, each of which has a bunch of implementation to present a friendly API over the lower level one exposed by the COM object.
 
 That's a lot, but is it a problem?
 
-Let's take a real world example from the primary project I work on, which depends on `windows-sys` (3 versions, we'll get to that), but no longer depends on `windows` since its compile times were far more egregious, but much easier to remove as we only depended on via 3 transitive dependencies.
+Let's take a real world example from the primary project I work on, which depends on `windows-sys` (3 versions, we'll get to that), but no longer depends on `windows` since its compile times were far more egregious, but much easier to remove as we only depended on it via 3 transitive dependencies.
 
-We'll look at just `windows-sys:0.45.0` as that is version that takes the longest to compile due to having the most features enabled.
+We'll look at just `windows-sys:0.45.0` as that is the version that takes the longest to compile due to having the most features enabled.
 
-```
+```ini
 [
     Win32,
     Win32_Devices,
@@ -156,4 +180,4 @@ We'll look at just `windows-sys:0.45.0` as that is version that takes the longes
 ]
 ```
 
-And....11.0s (2.2s codegen). Not bad! Except...this was on a 36 CPU Intel(R) Xeon(R) W-2295 CPU @ 3.00GHz machine, that seems, well, excessive.
+And....11.0s (2.2s codegen). Not bad! Except...this was on a 36 CPU Intel(R) Xeon(R) W-2295 CPU @ 3.00GHz machine, and seems, well, excessive.
