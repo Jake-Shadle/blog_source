@@ -4,7 +4,6 @@ title = "Jake's Blog"
 default_language = "en"
 
 theme = "Zulma"
-paginate_by = 5
 
 taxonomies = [
     { name = "tags", paginate_by = 5 },
@@ -24,5 +23,6 @@ zulma_menu = [
     { url = "$BASE_URL/categories", name = "Categories" },
     { url = "$BASE_URL/tags", name = "Tags" },
     { url = "https://github.com/Jake-Shadle", name = "Github" },
+    { url = "https://mastodon.gamedev.place/@ca1ne", name = "Mastodon" },
     { url = "https://twitter.com/Ca1ne", name = "Twitter" },
 ]

@@ -62,7 +62,7 @@ This unfortunately runs into the immediate problem of needing debug symbols. Min
 
 This presents an even thornier issue than that of platform specific crash formats, as debug formats are vastly more complicated and even more poorly documented. So, again, Breakpad opted to use a [single format](https://chromium.googlesource.com/breakpad/breakpad/+/HEAD/docs/symbol_files.md) that can be used to stackwalk and symbolicate a minidump, regardless of the source platform of the crash or the host platform of the processor. This format is vastly simpler and smaller than the native debug formats since it has the single goal of stack walking (in the case the binary has omitted [frame pointers](https://docs.microsoft.com/en-us/cpp/build/reference/oy-frame-pointer-omission?view=msvc-170)) and symbolicating (mapping addresses to source information eg. file, function, and line).
 
-```text
+```txt
 MODULE windows x86 5A9832E5287241C1838ED98914E9B7FF1 test_app.pdb
 FILE 1 c:\program files\microsoft visual studio 8\vc\platformsdk\include\winbase.h
 FILE 2 c:\program files\microsoft visual studio 8\vc\include\typeinfo
@@ -232,7 +232,7 @@ In conclusion, this means while doing the port I gleaned more useful information
 
 <div align="center">
 
-```text
+```txt
 ______          _    _               _____          _                                  _             
 |  ___|        | |  (_)             |  ___|        | |                                (_)            
 | |_ _   _  ___| | ___ _ __   __ _  | |__ _ __ ___ | |__   __ _ _ __ _ __ __ _ ___ ___ _ _ __   __ _ 
